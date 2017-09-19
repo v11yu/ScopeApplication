@@ -1,0 +1,48 @@
+﻿//Script GUID:bca8f1c1-dce3-4654-8fd2-72a86bcd7eea
+//Used for tracking history
+#IF (LOCAL)
+#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\recent-filtered-tweets.tsv";
+#DECLARE input_query_path string = @"D:\News_Team\Query-author-in-Twitter\QueryTopSites.tsv";
+#DECLARE output_data_path string = @"D:\News_Team\Query-author-in-Twitter\join-query-tweets.tsv";
+#ELSE
+#DECLARE input_tweet_path string = @"/local/Realtime/SocialVoice/recent-filtered-tweets.tsv";
+#DECLARE input_query_path string = @"/local/Realtime/SocialVoice/QueryTopSites.tsv";
+#DECLARE output_data_path string = @"/local/Realtime/SocialVoice/join-query-tweets.tsv";
+#ENDIF
+
+tw1 =
+    EXTRACT tID,
+            uID,
+            tRetweetCount,
+            tText,
+            uScreenName,
+            uFavoritesCount,
+            uFollowersCount,
+            uFriendsCount
+    FROM @input_tweet_path
+    USING DefaultTextExtractor();
+
+qy1 =
+    EXTRACT query,
+            site,
+            num1,
+            num2
+    FROM @input_query_path
+    USING DefaultTextExtractor();
+
+/*
+SELECT query
+FROM qy1
+GROUP BY query;
+*/
+
+/*
+data =
+    SELECT tw1.*,
+           qy1.*
+    FROM tw1
+         CROSS JOIN
+             qy1;
+*/
+OUTPUT 
+TO @output_data_path;

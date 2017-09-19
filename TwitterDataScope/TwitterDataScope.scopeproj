@@ -28,8 +28,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Script Include="FilterVerifyUser.script" />
+    <Script Include="JoinQueryAndTweets.script" />
     <ScriptCode Include="FilterVerifyUser.script.cs">
       <DependentUpon>FilterVerifyUser.script</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="JoinQueryAndTweets.script.cs">
+      <DependentUpon>JoinQueryAndTweets.script</DependentUpon>
     </ScriptCode>
   </ItemGroup>
   <Import Project="$(AppData)\Microsoft\ScopeStudio\MsBuild\1.0\Scope.targets" />
