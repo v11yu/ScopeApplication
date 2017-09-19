@@ -1,0 +1,60 @@
+﻿#IF (LOCAL)
+#DECLARE input_tweet_path string = @"C:\Users\wanwu\Documents\NewsTeam\twitter_14_00_00_v4.tsv";
+#DECLARE output_tweet_path string = @"C:\Users\wanwu\Documents\NewsTeam\recent-tweets.tsv";
+#ELSE
+#DECLARE input_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/%Y/%m/%d/twitter_%h_00_00_v4.tsv?date=2017-07-01...2017-09-16&hour=0...23";
+#DECLARE output_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/recent-filtered-tweets.tsv";
+#ENDIF
+//Script GUID:657daee9-987c-4007-8939-d70500a0883e
+//Used for tracking history
+//----------------------------------------------------------------------------------------------------------------------------------------------
+// "2016-07-01...2016-07-10"
+tw1 =
+    EXTRACT dateCreation,
+            hourCreation,
+            minuteCreation,
+            url,
+            domain,
+            isnewsurl,
+            tID,
+            uID,
+            uName,
+            userAgeInDays,
+            tweettext,
+            tIsRetweet,
+            tPublishTime,
+            tRetweetCount,
+            tText,
+            tRawText,
+            tSpamScore,
+            tTextFragments,
+            uScreenName,
+            uAuthScore,
+            uFavoritesCount,
+            uFollowersCount,
+            uFriendsCount,
+            uProfile,
+            uVerified:bool
+    FROM @input_tweet_path
+    USING DefaultTextExtractor();
+
+verifyUser =
+    SELECT *
+    FROM tw1
+    WHERE uVerified == true AND tText.Length > 5;
+
+removeDuplicate =
+    SELECT tID,
+           FIRST(uID) AS uId,
+           MAX(tRetweetCount) AS tRetweetCount,
+           FIRST(tText) AS tText,
+           FIRST(uScreenName) AS uScreenName,
+           FIRST(uFavoritesCount) AS uFavoritesCount,
+           FIRST(uFollowersCount) AS uFollowersCount,
+           FIRST(uFriendsCount) AS uFriendsCount //,FIRST(uName),FIRST(tText),FIRST(uScreenName),FIRST(uFavoritesCount),FIRST(uFollowersCount),FIRST(uFriendsCount)
+    FROM verifyUser
+    GROUP BY tID;
+//	ORDER BY tRetweetCount DESC;
+
+OUTPUT
+TO @output_tweet_path;
