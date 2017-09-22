@@ -27,9 +27,17 @@
     <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Script Include="CalculateTweetsCDSSM.script" />
+    <Script Include="FilterPublisherUser.script" />
     <Script Include="FilterVerifyUser.script" />
     <Script Include="JoinQueryAndTweets.script" />
     <Script Include="ProcessTweetsTest.script" />
+    <ScriptCode Include="CalculateTweetsCDSSM.script.cs">
+      <DependentUpon>CalculateTweetsCDSSM.script</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="FilterPublisherUser.script.cs">
+      <DependentUpon>FilterPublisherUser.script</DependentUpon>
+    </ScriptCode>
     <ScriptCode Include="FilterVerifyUser.script.cs">
       <DependentUpon>FilterVerifyUser.script</DependentUpon>
     </ScriptCode>

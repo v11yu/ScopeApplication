@@ -1,0 +1,59 @@
+﻿//Script GUID:09c2e4da-fff6-4c2b-ad6d-545d48ffa26f
+//Used for tracking history
+#IF (LOCAL)
+#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\small-tweets.tsv";
+#DECLARE DocSideCDSSM string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\DocSideCDSSM.txt";
+#DECLARE QuerySideCDSSM string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\QuerySideCDSSM.txt";
+#DECLARE StopWord string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\StopWords.txt";
+#DECLARE CDSSM string = @"D:\News_Team\Query-author-in-Twitter\DeepLearning.Model.dll";
+#DECLARE output_data_path string = @"D:\News_Team\Query-author-in-Twitter\join-query-tweets.tsv";
+	
+#ELSE
+#DECLARE input_tweet_path string = @@input_tweet_path@@;
+#DECLARE DocSideCDSSM string = @@DocSideCDSSM@@;
+#DECLARE QuerySideCDSSM string = @@QuerySideCDSSM@@;
+#DECLARE StopWord string = @@StopWord@@;
+#DECLARE CDSSM string = @@CDSSM@@;
+#DECLARE output_data_path string = @@output_data_path@@;
+#ENDIF
+
+#DECLARE DocSideCDSSMPath string= Path.GetFileName(@DocSideCDSSM);
+RESOURCE @DocSideCDSSM;
+#DECLARE QuerySideCDSSMPath string= Path.GetFileName(@QuerySideCDSSM);
+RESOURCE @QuerySideCDSSM;
+#DECLARE StopWordPath string= Path.GetFileName(@StopWord);
+RESOURCE @StopWord;
+#DECLARE CDSSMPath string= Path.GetFileName(@CDSSM);
+RESOURCE @CDSSM;
+REFERENCE @CDSSM;
+tw1 =
+    EXTRACT tID,
+            uID,
+            tRetweetCount,
+            tText,
+            uScreenName,
+            uFavoritesCount,
+            uFollowersCount,
+            uFriendsCount
+    FROM @input_tweet_path
+    USING DefaultTextExtractor();
+
+
+tw2 =
+    PROCESS tw1
+    PRODUCE tID,
+            uID,
+            tRetweetCount,
+            tText,
+            uScreenName,
+            uFavoritesCount,
+            uFollowersCount,
+            uFriendsCount,
+			CDSSM
+    USING TwitterProcessor(@DocSideCDSSM,@StopWord);
+
+OUTPUT tw2
+TO SSTREAM @@OutputPath@@;
+
+OUTPUT tw2
+TO  SSTREAM @output_data_path;

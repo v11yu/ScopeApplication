@@ -20,9 +20,20 @@ namespace DataHandlerApplication
          string output = @"D:\News_Team\Query-author-in-Twitter\FilteredQuerySets.tsv";
          QueryFilteredByLength.filterQuery(input, output);
       }
+
+      public static void testCDSSM()
+      {
+         string DocSideCDSSM = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\DocSideCDSSM.txt";
+         //string QuerySideCDSSM = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\QuerySideCDSSM.txt";
+         string StopWord = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\StopWords.txt";
+         string doc = "Sadiq Khan says carry on as normal You can still get drive thru	KTHopkins";
+         string val = CalculateCDSSM.GetCDSSM(doc, DocSideCDSSM, StopWord);
+         Console.WriteLine(doc + "\t" + val);
+         Console.ReadLine();
+      }
       static void Main(string[] args)
       {
-         filterQueryByLength();
+         testCDSSM();
       }
    }
 }

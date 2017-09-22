@@ -1,0 +1,55 @@
+﻿//Script GUID:dfaeed29-c783-4a7d-bc23-396725776aff
+//Used for tracking history
+#IF (LOCAL)
+#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\recent-filtered-tweets.tsv";
+#DECLARE Query string = @"D:\News_Team\Query-author-in-Twitter\QueryTopSites.tsv";
+#DECLARE removedUser string = @"D:\News_Team\Query-author-in-Twitter\removedUser.tsv";
+#DECLARE filteredTweets string = @"D:\News_Team\Query-author-in-Twitter\filteredTweets.tsv";
+#ELSE
+#DECLARE input_tweet_path string = @@input_tweet_path@@;
+#DECLARE Query string = @@input_query_path@@;
+#DECLARE removedUser string = @@removedUser@@;
+#DECLARE filteredTweets string = @@filteredTweets@@;
+#ENDIF
+
+RESOURCE @Query;
+tw1 =
+    EXTRACT tID,
+            uID,
+            tRetweetCount,
+            tText,
+            uScreenName,
+            uFavoritesCount,
+            uFollowersCount,
+            uFriendsCount
+    FROM @input_tweet_path
+    USING DefaultTextExtractor();
+
+removedUserTweets =
+    PROCESS tw1
+    PRODUCE *
+    USING TextProcessor(@Query,"true");
+
+filteredTweets =
+    PROCESS tw1
+    PRODUCE *
+    USING TextProcessor(@Query,"false");
+
+removedUser = 
+	SELECT
+	FIRST(uID) AS uID,
+	uScreenName  
+	FROM removedUserTweets
+	GROUP BY uScreenName;
+
+OUTPUT removedUser
+TO SSTREAM @@_removedUser@@;
+
+OUTPUT filteredTweets
+TO SSTREAM @@_filteredTweets@@;
+
+OUTPUT removedUser
+TO @removedUser;
+
+OUTPUT filteredTweets
+TO @filteredTweets;
