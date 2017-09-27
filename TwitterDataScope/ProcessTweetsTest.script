@@ -5,15 +5,17 @@
 #DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\recent-filtered-tweets.tsv";
 #DECLARE Query string = @"D:\News_Team\Query-author-in-Twitter\QuerySets.tsv";
 #DECLARE output_data_path string = @"D:\News_Team\Query-author-in-Twitter\join-query-tweets.tsv";
+#DECLARE stop_word string = @"D:\News_Team\Query-author-in-Twitter\StopWord.tsv";
 #ELSE
 #DECLARE input_tweet_path string = @@input_tweet_path@@;
-//@"/local/Realtime/SocialVoice/recent-filtered-tweets.tsv";
 #DECLARE Query string = @@Query@@;
 #DECLARE output_data_path string = @@output_data_path@@;
-//@"/local/Realtime/SocialVoice/join-query-tweets.tsv";
+#DECLARE stop_word string = @@stop_word@@;
 #ENDIF
 #DECLARE QueryPath string= Path.GetFileName(@Query);
 RESOURCE @Query;
+RESOURCE @stop_word;
+
 tw1 =
     EXTRACT tID,
             uID,
@@ -30,10 +32,10 @@ tw1 =
 tw2 =
     PROCESS tw1
     PRODUCE *
-    USING TwitterProcessor(@Query);
+    USING TwitterProcessor(@Query,@stop_word);
 
 OUTPUT tw2
 TO SSTREAM @@OutputPath@@;
 
 OUTPUT tw2
-TO  SSTREAM @output_data_path;
+TO  @output_data_path;

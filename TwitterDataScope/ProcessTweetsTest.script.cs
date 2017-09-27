@@ -8,9 +8,10 @@ using ScopeRuntime;
 public class TwitterProcessor : Processor
 {
    public static HashSet<string> wordSet = null;
+   public static HashSet<string> stopWordSet = null;
    HashSet<string> GetWordSet(string path)
    {
-      if(wordSet == null)
+      if (wordSet == null)
       {
          wordSet = new HashSet<string>();
          string[] querys = File.ReadAllLines(path);
@@ -25,6 +26,23 @@ public class TwitterProcessor : Processor
       }
       return wordSet;
    }
+   HashSet<string> GetStopWordSet(string path)
+   {
+      if (stopWordSet == null)
+      {
+         stopWordSet = new HashSet<string>();
+         string[] stopWords = File.ReadAllLines(path);
+         foreach (string wordline in stopWords)
+         {
+            string[] words = wordline.Split(' ');
+            foreach (string word in words)
+            {
+               stopWordSet.Add(word);
+            }
+         }
+      }
+      return stopWordSet;
+   }
    public override Schema Produces(string[] requested_columns, string[] args, Schema input_schema)
    {
       var output_schema = input_schema.Clone();
@@ -37,34 +55,14 @@ public class TwitterProcessor : Processor
       {
          input_row.CopyTo(output_row);
          bool isInQuery = false;
+         int tmpNum = 0;
          string[] words = input_row[3].String.Split(splitChar);
-         foreach(string word in words){
-            isInQuery = isInQuery || GetWordSet(args[0]).Contains(word);
+         foreach (string word in words)
+         {
+            if (!GetStopWordSet(args[1]).Contains(word)
+               && !int.TryParse(word, out tmpNum)) isInQuery = isInQuery || GetWordSet(args[0]).Contains(word);
          }
          if (isInQuery) { yield return output_row; }
-      }
-   }
-}
-
-public class MyTsvExtractor : Extractor
-{
-   public override Schema Produces(string[] requested_columns, string[] args)
-   {
-      return new Schema(requested_columns);
-   }
-
-   public override IEnumerable<Row> Extract(StreamReader reader, Row output_row, string[] args)
-   {
-      char delimiter = '\t';
-      string line;
-      while ((line = reader.ReadLine()) != null)
-      {
-         var tokens = line.Split(delimiter);
-         for (int i = 0; i < tokens.Length; ++i)
-         {
-            output_row[i].UnsafeSet(tokens[i]);
-         }
-         yield return output_row;
       }
    }
 }

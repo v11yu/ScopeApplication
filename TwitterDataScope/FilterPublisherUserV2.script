@@ -1,0 +1,37 @@
+﻿//Script GUID:1d2821e8-54b3-4a80-b17d-5f5ad37b3046
+//Used for tracking history
+
+
+//Filter publisher user v2 using text content and user name
+
+#IF (LOCAL)
+#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\recent-filtered-tweets.ss";
+#DECLARE Query string = @"D:\News_Team\Query-author-in-Twitter\QueryTopSites.tsv";
+#DECLARE removedUser string = @"D:\News_Team\Query-author-in-Twitter\removedUser.tsv";
+#ELSE
+#DECLARE input_tweet_path string = @@input_tweet_path@@;
+#DECLARE Query string = @@input_query_path@@;
+#DECLARE removedUser string = @@removedUser@@;
+#ENDIF
+
+RESOURCE @Query;
+
+tw1 = SSTREAM @input_tweet_path;
+
+
+removedUserByText = 
+	SELECT uID,
+		   FIRST(uScreenName) AS uScreenName,
+		   TwitterPublisherUserAgg(tText) AS isPublisherByText
+	FROM tw1
+	GROUP BY uID;
+
+removedUser = 
+	PROCESS removedUserByText
+	PRODUCE *
+	USING FilterPublisherByUserNameProcessor(@Query);
+
+
+
+OUTPUT removedUser
+TO @removedUser;

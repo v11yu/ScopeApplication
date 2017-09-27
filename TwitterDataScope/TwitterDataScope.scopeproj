@@ -28,15 +28,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Script Include="CalculateTweetsCDSSM.script" />
+    <Script Include="FilterPubliserUserV3.script" />
     <Script Include="FilterPublisherUser.script" />
+    <Script Include="FilterPublisherUserV2.script" />
     <Script Include="FilterVerifyUser.script" />
     <Script Include="JoinQueryAndTweets.script" />
     <Script Include="ProcessTweetsTest.script" />
     <ScriptCode Include="CalculateTweetsCDSSM.script.cs">
       <DependentUpon>CalculateTweetsCDSSM.script</DependentUpon>
     </ScriptCode>
+    <ScriptCode Include="FilterPubliserUserV3.script.cs">
+      <DependentUpon>FilterPubliserUserV3.script</DependentUpon>
+    </ScriptCode>
     <ScriptCode Include="FilterPublisherUser.script.cs">
       <DependentUpon>FilterPublisherUser.script</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="FilterPublisherUserV2.script.cs">
+      <DependentUpon>FilterPublisherUserV2.script</DependentUpon>
     </ScriptCode>
     <ScriptCode Include="FilterVerifyUser.script.cs">
       <DependentUpon>FilterVerifyUser.script</DependentUpon>
