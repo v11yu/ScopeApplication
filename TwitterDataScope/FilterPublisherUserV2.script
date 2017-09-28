@@ -28,7 +28,7 @@ removedUserByText =
 
 removedUser = 
 	PROCESS removedUserByText
-	PRODUCE *
+	PRODUCE uID,uScreenName,isPublisherByText,isSiteUser
 	USING FilterPublisherByUserNameProcessor(@Query);
 
 

@@ -28,14 +28,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Script Include="CalculateTweetsCDSSM.script" />
+    <Script Include="Clustered.script" />
     <Script Include="FilterPubliserUserV3.script" />
     <Script Include="FilterPublisherUser.script" />
     <Script Include="FilterPublisherUserV2.script" />
     <Script Include="FilterVerifyUser.script" />
     <Script Include="JoinQueryAndTweets.script" />
     <Script Include="ProcessTweetsTest.script" />
+    <Script Include="TsvToSS.script" />
     <ScriptCode Include="CalculateTweetsCDSSM.script.cs">
       <DependentUpon>CalculateTweetsCDSSM.script</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="Clustered.script.cs">
+      <DependentUpon>Clustered.script</DependentUpon>
     </ScriptCode>
     <ScriptCode Include="FilterPubliserUserV3.script.cs">
       <DependentUpon>FilterPubliserUserV3.script</DependentUpon>
@@ -55,6 +60,17 @@
     <ScriptCode Include="ProcessTweetsTest.script.cs">
       <DependentUpon>ProcessTweetsTest.script</DependentUpon>
     </ScriptCode>
+    <ScriptCode Include="TsvToSS.script.cs">
+      <DependentUpon>TsvToSS.script</DependentUpon>
+    </ScriptCode>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="DeepLearning.Model">
+      <Name>DeepLearning.Model</Name>
+      <AssemblyName>DeepLearning.Model.dll</AssemblyName>
+      <HintPath>bin\DeepLearning.Model.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <Import Project="$(AppData)\Microsoft\ScopeStudio\MsBuild\1.0\Scope.targets" />
 </Project>

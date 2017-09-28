@@ -1,37 +1,40 @@
-﻿//Script GUID:14ef37d2-bdec-4770-a37e-f9d81106632a
-//Used for tracking history
-
-
-//Filter publisher user v3 using text content and user name
-
-#IF (LOCAL)
-#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\recent-filtered-tweets.ss";
+﻿#IF (LOCAL)
+#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\twitter_13_00_00_v4.ss";
 #DECLARE Query string = @"D:\News_Team\Query-author-in-Twitter\QueryTopSites.tsv";
-#DECLARE removedUser string = @"D:\News_Team\Query-author-in-Twitter\removedUser.tsv";
+#DECLARE removedUser string = @"D:\News_Team\Query-author-in-Twitter\removedUser2.tsv";
 #ELSE
+/*
+#DECLARE input_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/recent-filtered-tweets.ss";
+#DECLARE Query string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/QueryTopSites.tsv";
+#DECLARE removedUser string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/removedUser.tsv";
+*/
 #DECLARE input_tweet_path string = @@input_tweet_path@@;
-#DECLARE Query string = @@input_query_path@@;
+#DECLARE Query string = @@Query@@;
 #DECLARE removedUser string = @@removedUser@@;
+
 #ENDIF
 
 RESOURCE @Query;
 
 tw1 = SSTREAM @input_tweet_path;
 
+removeUserByText = 
+SELECT uID,FIRST(uScreenName) AS uScreenName,TwitterPublisherUserAgg(tRawText,domain) AS isPublisherUserbyText
+FROM tw1
+GROUP BY uID;
 
-removedUserByText = 
-	SELECT uID,
-		   FIRST(uScreenName) AS uScreenName,
-		   TwitterPublisherUserAgg(domain) AS isPublisherByText
-	FROM tw1
-	GROUP BY uID;
-
-removedUser = 
-	PROCESS removedUserByText
-	PRODUCE *
-	USING FilterPublisherByUserNameProcessor(@Query);
+removedUser =
+    PROCESS removeUserByText
+    PRODUCE uID,uScreenName,isPublisherUserbyText,isSiteUser
+    USING FilterPublisherByUserNameProcessor(@Query);
 
 
+
+#IF (LOCAL)
+#ELSE
+OUTPUT removedUser
+TO SSTREAM @@_removedUser@@;
+#ENDIF
 
 OUTPUT removedUser
 TO @removedUser;

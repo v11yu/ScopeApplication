@@ -5,7 +5,7 @@
 #DECLARE DocSideCDSSM string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\DocSideCDSSM.txt";
 #DECLARE QuerySideCDSSM string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\QuerySideCDSSM.txt";
 #DECLARE StopWord string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\StopWords.txt";
-#DECLARE CDSSM string = @"D:\News_Team\Query-author-in-Twitter\DeepLearning.Model.dll";
+//#DECLARE CDSSM string = @"D:\News_Team\Query-author-in-Twitter\DeepLearning.Model.dll";
 #DECLARE output_data_path string = @"D:\News_Team\Query-author-in-Twitter\join-query-tweets.tsv";
 	
 #ELSE
@@ -13,7 +13,7 @@
 #DECLARE DocSideCDSSM string = @@DocSideCDSSM@@;
 #DECLARE QuerySideCDSSM string = @@QuerySideCDSSM@@;
 #DECLARE StopWord string = @@StopWord@@;
-#DECLARE CDSSM string = @@CDSSM@@;
+//#DECLARE CDSSM string = @@CDSSM@@;
 #DECLARE output_data_path string = @@output_data_path@@;
 #ENDIF
 
@@ -23,9 +23,10 @@ RESOURCE @DocSideCDSSM;
 RESOURCE @QuerySideCDSSM;
 #DECLARE StopWordPath string= Path.GetFileName(@StopWord);
 RESOURCE @StopWord;
-#DECLARE CDSSMPath string= Path.GetFileName(@CDSSM);
-RESOURCE @CDSSM;
-REFERENCE @CDSSM;
+
+
+//RESOURCE @CDSSM;
+REFERENCE "DeepLearning.Model.dll";
 tw1 =
     EXTRACT tID,
             uID,
@@ -56,4 +57,4 @@ OUTPUT tw2
 TO SSTREAM @@OutputPath@@;
 
 OUTPUT tw2
-TO  SSTREAM @output_data_path;
+TO @output_data_path;

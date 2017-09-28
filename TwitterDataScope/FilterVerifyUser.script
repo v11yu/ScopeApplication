@@ -3,7 +3,7 @@
 #DECLARE output_tweet_path string = @"C:\Users\wanwu\Documents\NewsTeam\recent-tweets.ss";
 #ELSE
 #DECLARE input_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/%Y/%m/%d/twitter_%h_00_00_v4.tsv?date=2017-07-01...2017-09-16&hour=0...23";
-#DECLARE output_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/recent-filtered-tweets.ss";
+#DECLARE output_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/recent-filtered-tweets-2.ss";
 #ENDIF
 //Script GUID:657daee9-987c-4007-8939-d70500a0883e
 //Used for tracking history
@@ -44,30 +44,30 @@ verifyUser =
     WHERE uVerified == true AND tText.Length > 5;
 
 removeDuplicate =
-    SELECT MAX(dateCreation) AS dateCreation,
-           FIRST(hourCreation) AS hourCreation,
-           FIRST(minuteCreation) AS minuteCreation,
+    SELECT //MAX(dateCreation) AS dateCreation,
+           //FIRST(hourCreation) AS hourCreation,
+           //FIRST(minuteCreation) AS minuteCreation,
            FIRST(url) AS url,
            FIRST(domain) AS domain,
            FIRST(isnewsurl) AS isnewsurl,
            tID,
            FIRST(uID) AS uID,
            FIRST(uName) AS uName,
-           FIRST(userAgeInDays) AS userAgeInDays,
-           FIRST(tweettext) AS tweettext,
-           FIRST(tIsRetweet) AS tIsRetweet,
-           FIRST(tPublishTime) AS tPublishTime,
+           //FIRST(userAgeInDays) AS userAgeInDays,
+           //FIRST(tweettext) AS tweettext,
+           //FIRST(tIsRetweet) AS tIsRetweet,
+           //FIRST(tPublishTime) AS tPublishTime,
            MAX(tRetweetCount) AS tRetweetCount,
-           FIRST(tText) AS tText,
+           //FIRST(tText) AS tText,
            FIRST(tRawText) AS tRawText,
-           FIRST(tSpamScore) AS tSpamScore,
-           FIRST(tTextFragments) AS tTextFragments,
+           //FIRST(tSpamScore) AS tSpamScore,
+          // FIRST(tTextFragments) AS tTextFragments,
            FIRST(uScreenName) AS uScreenName,
-           MAX(uAuthScore) AS uAuthScore,
+           //MAX(uAuthScore) AS uAuthScore,
            MAX(uFavoritesCount) AS uFavoritesCount,
            MAX(uFollowersCount) AS uFollowersCount,
            MAX(uFriendsCount) AS uFriendsCount,
-           FIRST(uProfile) AS uProfile,
+           //FIRST(uProfile) AS uProfile,
            FIRST(uVerified) AS uVerified
     FROM verifyUser
     GROUP BY tID;

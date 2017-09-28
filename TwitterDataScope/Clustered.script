@@ -1,0 +1,15 @@
+﻿//Script GUID:fb0cd5e3-1dd5-48dc-ba68-42bb263180c1
+//Used for tracking history
+#IF (LOCAL)
+#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\twitter_13_00_00_v4.ss";
+#DECLARE output string = @"D:\News_Team\Query-author-in-Twitter\tmp-twitter_13_00_00_v4.ss";
+#ELSE
+#DECLARE input_tweet_path string = @"/local/Realtime/SocialVoice/recent-filtered-tweets-2.ss";
+#DECLARE output string = @"/local/Realtime/SocialVoice/recent-filtered-tweets-2-index.ss";
+#ENDIF
+tw1 =
+    SSTREAM @input_tweet_path;
+OUTPUT
+TO SSTREAM @output
+   CLUSTERED BY uID
+       SORTED BY uID;

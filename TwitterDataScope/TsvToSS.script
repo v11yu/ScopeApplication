@@ -1,0 +1,41 @@
+﻿//Script GUID:46ae4275-ba2a-48b1-a656-7fe1777d8ffc
+//Used for tracking history
+#IF (LOCAL)
+#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\twitter_13_00_00_v4.tsv";
+#DECLARE output_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\twitter_13_00_00_v4.ss";
+#ELSE
+#DECLARE input_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/%Y/%m/%d/twitter_%h_00_00_v4.tsv?date=2017-07-01...2017-09-16&hour=0...23";
+#DECLARE output_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/recent-filtered-tweets.ss";
+#ENDIF
+
+tw1 =
+    EXTRACT dateCreation,
+            hourCreation,
+            minuteCreation,
+            url,
+            domain,
+            isnewsurl,
+            tID,
+            uID,
+            uName,
+            userAgeInDays,
+            tweettext,
+            tIsRetweet,
+            tPublishTime,
+            tRetweetCount,
+            tText,
+            tRawText,
+            tSpamScore,
+            tTextFragments,
+            uScreenName,
+            uAuthScore,
+            uFavoritesCount,
+            uFollowersCount,
+            uFriendsCount,
+            uProfile,
+            uVerified:bool
+    FROM @input_tweet_path
+    USING DefaultTextExtractor();
+
+OUTPUT tw1
+TO SSTREAM @output_tweet_path;
