@@ -12,8 +12,9 @@ public class TwitterPublisherUserAgg_StringString : Aggregate2<string, string, b
    bool isPublisherUser;
    Dictionary<string, int> siteMap;
    int thresholds = 20;
+   double thresholds2 = 0.5;
    int count = 0;
-   string[] blackList = { "youtube.com", "twitter.com", "facebook.com" };
+   string[] blackList = { "youtube.com", "twitter.com", "facebook.com", "instagram.com" };
    HashSet<string> blackSet = new HashSet<string>();
 
    public override void Initialize()
@@ -61,8 +62,8 @@ public class TwitterPublisherUserAgg_StringString : Aggregate2<string, string, b
    {
       foreach (KeyValuePair<string, int> entry in siteMap)
       {
-         //if ((1.0*entry.Value/(1.0*count)) >= thresholds) isPublisherUser = true;
-         if (entry.Value >= thresholds) isPublisherUser = true;
+         if ((1.0*entry.Value/(1.0*count)) >= thresholds2 && entry.Value >= thresholds) isPublisherUser = true;
+         //if (entry.Value >= thresholds) isPublisherUser = true;
       }
       return isPublisherUser;
    }

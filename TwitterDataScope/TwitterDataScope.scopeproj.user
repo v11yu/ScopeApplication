@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <StartFile>FilterPubliserUserV3.script</StartFile>
+    <StartFile>FilterPublisherUserV2.script</StartFile>
     <CurrentWorkingVC>vc://cosmos11/Realtime</CurrentWorkingVC>
     <BuildClusterPlanProperty>False</BuildClusterPlanProperty>
-    <ActiveFile>FilterPubliserUserV3.script</ActiveFile>
+    <ActiveFile>FilterPublisherUserV2.script</ActiveFile>
   </PropertyGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿//Script GUID:09c2e4da-fff6-4c2b-ad6d-545d48ffa26f
 //Used for tracking history
 #IF (LOCAL)
-#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\small-tweets.tsv";
+#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\recent-filtered-tweets.ss";
 #DECLARE DocSideCDSSM string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\DocSideCDSSM.txt";
 #DECLARE QuerySideCDSSM string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\QuerySideCDSSM.txt";
 #DECLARE StopWord string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\StopWords.txt";
@@ -28,6 +28,8 @@ RESOURCE @StopWord;
 //RESOURCE @CDSSM;
 REFERENCE "DeepLearning.Model.dll";
 tw1 =
+SSTREAM @input_tweet_path;
+    /*
     EXTRACT tID,
             uID,
             tRetweetCount,
@@ -38,6 +40,7 @@ tw1 =
             uFriendsCount
     FROM @input_tweet_path
     USING DefaultTextExtractor();
+*/
 
 
 tw2 =
@@ -53,8 +56,11 @@ tw2 =
 			CDSSM
     USING TwitterProcessor(@DocSideCDSSM,@StopWord);
 
+#IF (LOCAL)
+#ELSE
 OUTPUT tw2
 TO SSTREAM @@OutputPath@@;
+#ENDIF
 
 OUTPUT tw2
 TO @output_data_path;

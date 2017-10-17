@@ -1,13 +1,14 @@
 ﻿//Script GUID:46ae4275-ba2a-48b1-a656-7fe1777d8ffc
 //Used for tracking history
 #IF (LOCAL)
-#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\twitter_13_00_00_v4.tsv";
-#DECLARE output_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\twitter_13_00_00_v4.ss";
+#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\recent-filtered-tweets.tsv";
+#DECLARE output_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\recent-filtered-tweets.ss";
 #ELSE
 #DECLARE input_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/%Y/%m/%d/twitter_%h_00_00_v4.tsv?date=2017-07-01...2017-09-16&hour=0...23";
 #DECLARE output_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/recent-filtered-tweets.ss";
 #ENDIF
 
+/*
 tw1 =
     EXTRACT dateCreation,
             hourCreation,
@@ -34,6 +35,18 @@ tw1 =
             uFriendsCount,
             uProfile,
             uVerified:bool
+    FROM @input_tweet_path
+    USING DefaultTextExtractor();
+	*/
+tw1 =
+    EXTRACT tID,
+            uID,
+            tRetweetCount,
+            tText,
+            uScreenName,
+            uFavoritesCount,
+            uFollowersCount,
+            uFriendsCount
     FROM @input_tweet_path
     USING DefaultTextExtractor();
 

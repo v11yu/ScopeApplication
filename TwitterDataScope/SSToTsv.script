@@ -1,0 +1,46 @@
+﻿//Script GUID:46ae4275-ba2a-48b1-a656-7fe1777d8ffc
+//Used for tracking history
+#IF (LOCAL)
+#DECLARE fileName string = "removed-user-v5";
+#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\"+@fileName+".ss";
+#DECLARE output_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\"+@fileName+".tsv";
+#ELSE
+#DECLARE input_tweet_path string = @@input_tweet_path@@;
+#DECLARE output_tweet_path string = @@output_tweet_path@@;
+#ENDIF
+
+/*
+tw1 =
+    EXTRACT dateCreation,
+            hourCreation,
+            minuteCreation,
+            url,
+            domain,
+            isnewsurl,
+            tID,
+            uID,
+            uName,
+            userAgeInDays,
+            tweettext,
+            tIsRetweet,
+            tPublishTime,
+            tRetweetCount,
+            tText,
+            tRawText,
+            tSpamScore,
+            tTextFragments,
+            uScreenName,
+            uAuthScore,
+            uFavoritesCount,
+            uFollowersCount,
+            uFriendsCount,
+            uProfile,
+            uVerified:bool
+    FROM @input_tweet_path
+    USING DefaultTextExtractor();
+	*/
+tw1 =
+    SSTREAM @input_tweet_path;
+
+OUTPUT tw1
+TO @output_tweet_path;

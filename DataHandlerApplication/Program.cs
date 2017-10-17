@@ -33,7 +33,13 @@ namespace DataHandlerApplication
       }
       static void Main(string[] args)
       {
-         testCDSSM();
+         string path = @"D:\News_Team\Query-author-in-Twitter\";
+         string[] myargs = {path+ "UDiscoveryPatternsList_Int.csv",
+            path + "UDiscoveryPatternsList_Int-keyword.tsv",
+         "100"};
+         //GetQueryFilter.getQuerySet(args);
+         //CalculateWordMapTweets.calculateWordMapTweets(args);
+         UDiscoveryPatternsListHandler.GetSourceName(myargs[0], myargs[1]);
       }
    }
 }
