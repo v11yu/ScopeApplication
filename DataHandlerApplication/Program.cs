@@ -26,9 +26,13 @@ namespace DataHandlerApplication
          string DocSideCDSSM = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\DocSideCDSSM.txt";
          //string QuerySideCDSSM = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\QuerySideCDSSM.txt";
          string StopWord = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\StopWords.txt";
-         string doc = "Sadiq Khan says carry on as normal You can still get drive thru	KTHopkins";
-         string val = CalculateCDSSM.GetCDSSM(doc, DocSideCDSSM, StopWord);
-         Console.WriteLine(doc + "\t" + val);
+         string doc = "China";
+         string doc1 = "This is why China has so few female leaders";
+         List<float> val = CalculateCDSSM.GetCDSSM(doc, DocSideCDSSM, StopWord);
+         List<float> val1 = CalculateCDSSM.GetCDSSM(doc1, DocSideCDSSM, StopWord);
+         Console.WriteLine(doc + "\t" + string.Join(",", val));
+         Console.WriteLine(doc1 + "\t" + string.Join(",", val1));
+         Console.WriteLine(CalculateCDSSM.GetCosSimilarity(val,val1));
          Console.ReadLine();
       }
       static void Main(string[] args)
@@ -39,7 +43,9 @@ namespace DataHandlerApplication
          "100"};
          //GetQueryFilter.getQuerySet(args);
          //CalculateWordMapTweets.calculateWordMapTweets(args);
-         UDiscoveryPatternsListHandler.GetSourceName(myargs[0], myargs[1]);
+         //UDiscoveryPatternsListHandler.GetSourceName(myargs[0], myargs[1]);
+         //StatisticsJudgement.statisticsJudgement(@"D:\News_Team\Judgement\UHRS_Task_Round 2.1.tsv", 3, 15, 17);
+         testCDSSM();
       }
    }
 }

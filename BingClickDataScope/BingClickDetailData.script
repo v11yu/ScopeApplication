@@ -1,0 +1,23 @@
+﻿//Script GUID:8eba2865-8264-499f-ba2a-4724f0aff107
+//Used for tracking history
+#IF (LOCAL)
+#DECLARE fileName string = "ClickDetail";
+#DECLARE input_path string = @"D:\News_Team\Query-author-in-Twitter\"+@fileName+".ss";
+#DECLARE output_path string = @"D:\News_Team\Query-author-in-Twitter\"+@fileName+".tsv";
+#ELSE
+#DECLARE fileName string = "ClickDetail.ss";
+#DECLARE input_path string = @"/local/Mirrors/ToCosmos08/TimeLine/BingClick/2017-10-14/"+@fileName;
+	
+#DECLARE output_path string = @"/local/users/wanwu/ClickDetail-category.tsv";
+#ENDIF
+
+clk =
+    SSTREAM @input_path;
+
+category = 
+	SELECT Category
+	FROM clk 
+	GROUP BY Category;
+
+OUTPUT category
+TO @output_path;

@@ -7,6 +7,8 @@ Project("{202899A3-C531-4771-9089-0213D66978AE}") = "TwitterDataScope", "Twitter
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataHandlerApplication", "DataHandlerApplication\DataHandlerApplication.csproj", "{D172A3AB-CE6D-41C5-A0B4-2D8587A0D53E}"
 EndProject
+Project("{202899A3-C531-4771-9089-0213D66978AE}") = "BingClickDataScope", "BingClickDataScope\BingClickDataScope.scopeproj", "{F1E00545-F458-4F54-A0F6-22E6D822E273}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,18 @@ Global
 		{D172A3AB-CE6D-41C5-A0B4-2D8587A0D53E}.Release|x64.Build.0 = Release|Any CPU
 		{D172A3AB-CE6D-41C5-A0B4-2D8587A0D53E}.Release|x86.ActiveCfg = Release|Any CPU
 		{D172A3AB-CE6D-41C5-A0B4-2D8587A0D53E}.Release|x86.Build.0 = Release|Any CPU
+		{F1E00545-F458-4F54-A0F6-22E6D822E273}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1E00545-F458-4F54-A0F6-22E6D822E273}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1E00545-F458-4F54-A0F6-22E6D822E273}.Debug|x64.ActiveCfg = Debug|x64
+		{F1E00545-F458-4F54-A0F6-22E6D822E273}.Debug|x64.Build.0 = Debug|x64
+		{F1E00545-F458-4F54-A0F6-22E6D822E273}.Debug|x86.ActiveCfg = Debug|x86
+		{F1E00545-F458-4F54-A0F6-22E6D822E273}.Debug|x86.Build.0 = Debug|x86
+		{F1E00545-F458-4F54-A0F6-22E6D822E273}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1E00545-F458-4F54-A0F6-22E6D822E273}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1E00545-F458-4F54-A0F6-22E6D822E273}.Release|x64.ActiveCfg = Release|x64
+		{F1E00545-F458-4F54-A0F6-22E6D822E273}.Release|x64.Build.0 = Release|x64
+		{F1E00545-F458-4F54-A0F6-22E6D822E273}.Release|x86.ActiveCfg = Release|x86
+		{F1E00545-F458-4F54-A0F6-22E6D822E273}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

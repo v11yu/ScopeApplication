@@ -3,24 +3,17 @@
 #IF (LOCAL)
 #DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\recent-filtered-tweets.ss";
 #DECLARE DocSideCDSSM string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\DocSideCDSSM.txt";
-#DECLARE QuerySideCDSSM string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\QuerySideCDSSM.txt";
 #DECLARE StopWord string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\StopWords.txt";
-//#DECLARE CDSSM string = @"D:\News_Team\Query-author-in-Twitter\DeepLearning.Model.dll";
 #DECLARE output_data_path string = @"D:\News_Team\Query-author-in-Twitter\join-query-tweets.tsv";
-	
 #ELSE
 #DECLARE input_tweet_path string = @@input_tweet_path@@;
 #DECLARE DocSideCDSSM string = @@DocSideCDSSM@@;
-#DECLARE QuerySideCDSSM string = @@QuerySideCDSSM@@;
 #DECLARE StopWord string = @@StopWord@@;
-//#DECLARE CDSSM string = @@CDSSM@@;
 #DECLARE output_data_path string = @@output_data_path@@;
 #ENDIF
 
 #DECLARE DocSideCDSSMPath string= Path.GetFileName(@DocSideCDSSM);
 RESOURCE @DocSideCDSSM;
-#DECLARE QuerySideCDSSMPath string= Path.GetFileName(@QuerySideCDSSM);
-RESOURCE @QuerySideCDSSM;
 #DECLARE StopWordPath string= Path.GetFileName(@StopWord);
 RESOURCE @StopWord;
 
@@ -53,7 +46,7 @@ tw2 =
             uFavoritesCount,
             uFollowersCount,
             uFriendsCount,
-			CDSSM
+			tCDSSM
     USING TwitterProcessor(@DocSideCDSSM,@StopWord);
 
 #IF (LOCAL)
@@ -61,6 +54,5 @@ tw2 =
 OUTPUT tw2
 TO SSTREAM @@OutputPath@@;
 #ENDIF
-
 OUTPUT tw2
 TO @output_data_path;

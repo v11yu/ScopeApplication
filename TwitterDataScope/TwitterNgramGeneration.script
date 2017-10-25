@@ -1,0 +1,332 @@
+﻿//Script GUID:2344c460-ae72-41bb-8a5d-ef7ef55c1a52
+//Used for tracking history
+
+REFERENCE @"/local/Realtime/SocialVoice/QueryTwitterMapping/Lib/Microsoft.Live.Json.dll";
+REFERENCE @"/local/Realtime/SocialVoice/QueryTwitterMapping/Lib/SearchLogExtractor.dll";
+REFERENCE @"/local/Realtime/SocialVoice/QueryTwitterMapping/Lib/Newtonsoft.Json.dll";
+RESOURCE @"/local/Realtime/SocialVoice/QueryTwitterMapping/Lib/twigg-sample-mapping.txt";
+
+#DECLARE THISHOUR DateTime = DateTime.UtcNow.AddHours(0); 
+#DECLARE LASTHOUR DateTime = DateTime.UtcNow.AddHours(-1);
+#DECLARE LASTTWODAYS DateTime = @LASTHOUR.AddHours(-2 * 24);
+#DECLARE IN_RAWDATA_THISHOUR string = @"/shares/searchSocialDM/Twitter/updates_hourly/?date="+@THISHOUR.ToString("yyyy-MM-dd")+"&hour="+@THISHOUR.ToString("HH")+"&sparsestreamset=true"; 
+#DECLARE IN_RAWDATA_LASTHOUR string = @"/shares/searchSocialDM/Twitter/updates_hourly/?date="+@LASTHOUR.ToString("yyyy-MM-dd")+"&hour="+@LASTHOUR.ToString("HH")+"&sparsestreamset=true"; 
+#DECLARE TRUSTED_USERS string = @"/shares/searchSocialDM/SocialInnovation/KPG/TrustedUsers/user-degrees.ss";
+#DECLARE NEWS_PUBLISHER_PATH string = @"/local/Realtime/SocialVoice/news-publishers.tsv";
+
+#DECLARE DEBUG bool = false;
+
+#IF(@DEBUG)
+    #DECLARE OUTPUT_DIR string = @"/local/Realtime/SocialVoice/Debug";
+#ELSE
+    #DECLARE OUTPUT_DIR string = @"/local/Realtime/SocialVoice";
+#ENDIF
+
+#DECLARE OUT_URL_FIRST_APPEAR_THISHOUR string = @OUTPUT_DIR + @"/TwitterSummarizedContent/AnalyticsCounts/Urls/"+@THISHOUR.ToString("yyyy")+"/"+@THISHOUR.ToString("MM")+"/"+@THISHOUR.ToString("dd")+"/"+@THISHOUR.ToString("HH")+"_00_00.tsv";
+#DECLARE OUT_URL_FIRST_APPEAR_LASTHOUR_V2 string = @OUTPUT_DIR + @"/TwitterSummarizedContent/AnalyticsCounts/Urls/"+@LASTHOUR.ToString("yyyy")+"/"+@LASTHOUR.ToString("MM")+"/"+@LASTHOUR.ToString("dd")+"/"+@LASTHOUR.ToString("HH")+"_00_00_v2.tsv";
+
+#DECLARE OUT_STRUCTUREDDATA_THISHOUR string = @OUTPUT_DIR + @"/TwitterSummarizedContent/AnalyticsCounts/Ngrams/"+@THISHOUR.ToString("yyyy")+"/"+@THISHOUR.ToString("MM")+"/"+@THISHOUR.ToString("dd")+"/"+@THISHOUR.ToString("HH")+"_00_00.tsv"; 
+
+#DECLARE OUT_TWITTERDATA_LASTHOUR_V4 string = @OUTPUT_DIR + @"/TwitterSummarizedContent/AnalyticsCounts/Ngrams/"+@LASTHOUR.ToString("yyyy")+"/"+@LASTHOUR.ToString("MM")+"/"+@LASTHOUR.ToString("dd")+"/twitter_"+@LASTHOUR.ToString("HH")+"_00_00_v4.tsv";
+#DECLARE OUT_ENTITYDATA_LASTHOUR_V4 string = @OUTPUT_DIR + @"/TwitterSummarizedContent/AnalyticsCounts/Ngrams/"+@LASTHOUR.ToString("yyyy")+"/"+@LASTHOUR.ToString("MM")+"/"+@LASTHOUR.ToString("dd")+"/entity_"+@LASTHOUR.ToString("HH")+"_00_00_v4.tsv";
+
+#DECLARE OUT_LOCATIONDATA_LASTHOUR string = @OUTPUT_DIR + @"/TwitterSummarizedContent/AnalyticsCounts/Location/"+@LASTHOUR.ToString("yyyy")+"/"+@LASTHOUR.ToString("MM")+"/"+@LASTHOUR.ToString("dd")+"/"+@LASTHOUR.ToString("HH")+"_00_00.tsv"; 
+#DECLARE OUT_LOCATIONDATA_LASTHOUR_DEFAULTPATH string = @OUTPUT_DIR + @"/TwitterSummarizedContent/AnalyticsCounts/Location/locationDataLastHour.tsv"; 
+ 
+REFERENCE @"/local/Realtime/ScopeResource/Relevance.ScopeLib.dll";
+USING Microsoft.SegmentRelevance.ScopeLib; 
+#DECLARE Seed string = ((int)DateTime.Now.Ticks).ToString();
+#DECLARE SampledPercent string = (0.05).ToString();
+#DECLARE MinRetweetCount int = 20;
+#DECLARE MaxUserDegree int = 2;
+
+//Reading last hours data 
+extractedData_LastHourv2 = 
+    EXTRACT tDomain:string, 
+            tAdultScore:string, 
+            tUrl:string, 
+            tNamedEntityFirst:string, 
+            tNamedEntityCategoryFirst:string, 
+            tNamedEntitySecond:string, 
+            tNamedEntityCategorySecond:string, 
+            tNamedEntityThird:string, 
+            tNamedEntityCategoryThird:string, 
+            tLinkAnnotations:string, 
+            tText:string, 
+            tLink:string, 
+            tIsRetweet:string,    
+            tLanguage:string,    
+            tCreatedAt:string,  
+            tRetweetCount:string, 
+            uUtcOffset:string, 
+            tTitle:string, 
+            tID:string, 
+            uID:string, 
+            uScreenName:string, 
+            uName:string, 
+            uCreatedAt:string, 
+            uLocation:string, 
+            uGeoEnabled:string, 
+            tGeoPoint:string, 
+            tSource:string,
+            //new columns
+            tLinks:string,
+            tSpamScore:string,
+            uProfilePage:string,
+            uProfileImageUrl:string,
+            uAuthScore:string,
+            uVerified:string,
+            uFavoritesCount:string,
+            uFollowersCount:string,
+            uFriendsCount:string
+    FROM @IN_RAWDATA_LASTHOUR 
+    USING 
+    MS.Internal.Bing.DataMining.SearchLogExtractor.RawEventExtractor("-noEmbeddedMapping", 
+          "-ignoreParseErrors", 
+          "-includeMapping",  
+          "twigg-sample-mapping.txt") 
+    HAVING tLanguage == "en";
+
+#IF(@DEBUG)
+    #DECLARE Output_TwitterCount_Step1 string = @OUTPUT_DIR + "/TwitterCount_Step1.tsv";
+    SELECT tID FROM extractedData_LastHourv2 GROUP BY tID;
+    SELECT COUNT(*) AS distincttIDCount;
+    OUTPUT TO @Output_TwitterCount_Step1;
+#ENDIF
+
+//Filtering latitude and longitude data 
+locationData    =  
+    SELECT  
+        TextFunctions.breakString(tGeoPoint,' ',1) AS latitude, 
+        TextFunctions.breakString(tGeoPoint,' ',2) AS longitude,
+        uLocation, 
+        TextFunctions.getPrintableDate(tCreatedAt) AS printableDate, 
+        tText, 
+        tRetweetCount, 
+        tIsRetweet, 
+        uID, 
+        tLanguage, 
+        tID, 
+        tSource
+    FROM extractedData_LastHourv2
+    WHERE tGeoPoint != "";
+ 
+OUTPUT locationData TO @OUT_LOCATIONDATA_LASTHOUR WITH STREAMEXPIRY "90"; 
+OUTPUT locationData TO @OUT_LOCATIONDATA_LASTHOUR_DEFAULTPATH WITH STREAMEXPIRY "90"; 
+
+//filter tweets that are created at 48 hours ago
+extractedData_LastHourv2 = 
+    SELECT tDomain,  
+           tUrl, 
+           tNamedEntityFirst, 
+           tNamedEntityCategoryFirst, 
+           tNamedEntitySecond, 
+           tNamedEntityCategorySecond, 
+           tNamedEntityThird, 
+           tNamedEntityCategoryThird, 
+           tLinkAnnotations, 
+           tText, 
+           tIsRetweet,   
+           tCreatedAt,  
+           tRetweetCount, 
+           uUtcOffset, 
+           tTitle, 
+           tID, 
+           uID, 
+           uScreenName, 
+           uName, 
+           uCreatedAt, 
+           //new columns
+           tSpamScore,
+           uProfilePage,
+           uProfileImageUrl,
+           uAuthScore,
+           uVerified,
+           uFavoritesCount,
+           uFollowersCount,
+           uFriendsCount,
+           //tLinks,
+           TextFunctions.generateTextFragments(TextFunctions.cleanString(tText), tLinks) AS tTextFragments,
+           1 AS Tag,
+           1.0 AS Weight
+    FROM extractedData_LastHourv2 
+    HAVING Convert.ToDateTime(TextFunctions.DateFormatUtc(TextFunctions.Strip(tCreatedAt), "0", 0.0)) >= @LASTTWODAYS;
+
+#IF(@DEBUG)
+    #DECLARE Output_TwitterCount_Step3 string = @OUTPUT_DIR + "/TwitterCount_Step3.tsv";
+    SELECT tID FROM extractedData_LastHourv2 GROUP BY tID;
+    SELECT COUNT(*) AS distincttIDCount;
+    OUTPUT TO @Output_TwitterCount_Step3;
+    #DECLARE Output_Twitter_Step3 string = @OUTPUT_DIR + "/Twitter_Step3.tsv";
+    SELECT * FROM extractedData_LastHourv2 WHERE string.IsNullOrEmpty(tTextFragments);
+    OUTPUT TO @Output_Twitter_Step3;
+#ENDIF
+
+extractedData_LastHourv2 = 
+SELECT * FROM extractedData_LastHourv2
+      WHERE !string.IsNullOrEmpty(tTextFragments);
+
+#IF(@DEBUG)
+    #DECLARE Output_TwitterCount_Step4 string = @OUTPUT_DIR + "/TwitterCount_Step4.tsv";
+    SELECT tID FROM extractedData_LastHourv2 GROUP BY tID;
+    SELECT COUNT(*) AS distincttIDCount;
+    OUTPUT TO @Output_TwitterCount_Step4;
+    #DECLARE Output_Twitter_Step4 string = @OUTPUT_DIR + "/Twitter_Step4.tsv";
+    OUTPUT extractedData_LastHourv2 TO @Output_Twitter_Step4;
+    SELECT tID, Functions.MinuteGap(tCreatedAt, DateTime.UtcNow) AS minuteGap FROM extractedData_LastHourv2 WHERE tRetweetCount == "0";
+    SELECT AVG(minuteGap) AS AvgMinuteGap;
+    #DECLARE Output_TimeDistribution string = @OUTPUT_DIR + "/TwitterTime_Step4.tsv";
+    OUTPUT TO @Output_TimeDistribution;
+    
+    PopularIDs =
+    SELECT tID FROM extractedData_LastHourv2 WHERE Convert.ToInt32(tRetweetCount) != 0 GROUP BY tID;
+    
+    PopularDebug = 
+    SELECT PopularIDs.tID, tCreatedAt, tText, tIsRetweet, Convert.ToInt32(tRetweetCount) AS tRetweetCount FROM extractedData_LastHourv2 INNER JOIN PopularIDs ON extractedData_LastHourv2.tID == PopularIDs.tID;
+    #DECLARE Output_TwitterCount_Step4_2 string = @OUTPUT_DIR + "/TwitterCount_Step4_2.tsv";
+    OUTPUT TO @Output_TwitterCount_Step4_2 ORDER BY tID, tRetweetCount ASC;
+#ENDIF
+
+//take the largest tRetweetCount as true tRetweetCount
+extractedData_LastHourv2 = 
+    SELECT *,
+           ROW_NUMBER() OVER(PARTITION BY tID ORDER BY Convert.ToInt32(tRetweetCount) DESC) AS rank
+    FROM extractedData_LastHourv2
+    HAVING rank <= 1;
+
+#IF(@DEBUG)
+    #DECLARE Output_TwitterCount_Step5 string = @OUTPUT_DIR + "/TwitterCount_Step5.tsv";
+    SELECT tID FROM extractedData_LastHourv2 GROUP BY tID;
+    SELECT COUNT(*) AS distincttIDCount;
+    OUTPUT TO @Output_TwitterCount_Step5;
+#ENDIF
+
+//add filters here
+//1. high quality: retweetCount & user trusted
+//2. random sample
+//union 1 and 2
+//trusted users
+//TODO: use one processor to replace
+trustedUsers = SSTREAM @TRUSTED_USERS;
+
+extractedData_LastHourv2_user = 
+    SELECT extractedData_LastHourv2.*,
+           ColumnMerger.IsHighQuality(Convert.ToInt32(tRetweetCount), @MinRetweetCount, bool.Parse(uVerified)) AS IsHighQuality
+    FROM extractedData_LastHourv2
+         LEFT OUTER JOIN trustedUsers
+    ON extractedData_LastHourv2.uID == trustedUsers.uID;
+
+#IF(@DEBUG)
+    #DECLARE Output_TwitterCount_Step6 string = @OUTPUT_DIR + "/TwitterCount_Step6.tsv";
+    SELECT tID, FIRST(IsHighQuality) AS IsHighQuality, FIRST(Convert.ToInt32(tRetweetCount)) AS retweetCount GROUP BY tID;
+    SELECT COUNTIF((IsHighQuality & 1) > 0) AS CounttrustUser, 
+           COUNTIF((IsHighQuality & 2) > 0) AS CountRetweet,
+           COUNTIF(retweetCount >= 10) AS CountRetweet2,
+           COUNTIF(retweetCount >= 12) AS CountRetweet3,
+           COUNTIF(retweetCount >= 14) AS CountRetweet4,
+           COUNTIF(retweetCount >= 16) AS CountRetweet5,
+           COUNTIF(retweetCount >= 18) AS CountRetweet6,
+           COUNTIF(retweetCount >= 20) AS CountRetweet7,
+           COUNTIF(retweetCount >= 22) AS CountRetweet8,
+           COUNTIF(retweetCount >= 24) AS CountRetweet9,
+           COUNTIF(retweetCount >= 26) AS CountRetweet10,
+           COUNTIF(retweetCount >= 28) AS CountRetweet11,
+           COUNTIF(retweetCount >= 30) AS CountRetweet12,
+           COUNTIF((IsHighQuality & 4) > 0) AS CountVerifiedUser,
+           COUNTIF(IsHighQuality > 0) AS CountHighQuality,
+           COUNTIF((IsHighQuality & 6) > 0) AS CountNewHighQuality,
+           COUNTIF(IsHighQuality == 0) AS CountLowQuality;
+    OUTPUT TO @Output_TwitterCount_Step6;
+#ENDIF
+
+extractedData_LastHourv3 = 
+PROCESS extractedData_LastHourv2_user
+USING RandomSampler(@SampledPercent);
+
+#IF(@DEBUG)
+    #DECLARE Output_TwitterCount_Step7 string = @OUTPUT_DIR + "/TwitterCount_Step7.tsv";
+    SELECT tID, FIRST(IsHighQuality) AS IsHighQuality GROUP BY tID;
+    SELECT COUNTIF(IsHighQuality > 0) AS CountHighQuality, COUNTIF(IsHighQuality == 0) AS CountLowQuality;
+    OUTPUT TO @Output_TwitterCount_Step7;
+#ENDIF
+
+entityTokenPreGeneratedLastHourv3 =  
+    PROCESS extractedData_LastHourv3
+    USING PreGeneratedEntityV2();
+
+entityTokenPreGeneratedLastHourv4 =
+SELECT      FIRST(dateCreation) AS dateCreation, 
+            FIRST(hourCreation) AS hourCreation, 
+            FIRST(minuteCreation) AS minuteCreation,
+            FIRST(url) AS url, 
+            FIRST(domain) AS domain, 
+            FIRST(isnewsurl) AS isnewsrul, 
+            tID, 
+            FIRST(uID) AS uID, 
+            FIRST(uName) AS uName, 
+            FIRST(userAgeInDays) AS userAgeInDays, 
+            FIRST(tweettext) AS tweettext, 
+            FIRST(tIsRetweet) AS tIsRetweet,
+            //new columns
+            FIRST(tPublishTime) AS tPublishTime,
+            FIRST(tRetweetCount) AS tRetweetCount,
+            FIRST(tText) AS tText,
+            FIRST(tRawText) AS tRawText,
+            FIRST(tSpamScore) AS tSpamScore,
+            FIRST(tTextFragments) AS tTextFragments,
+            FIRST(uScreenName) AS uScreenName,
+            FIRST(uAuthScore) AS uAuthScore,
+            FIRST(uFavoritesCount) AS uFavoritesCount,
+            FIRST(uFollowersCount) AS uFollowersCount,
+            FIRST(uFriendsCount) AS uFriendsCount,
+            FIRST(uProfile) AS uProfile,
+            FIRST(uVerified) AS uVerified
+FROM entityTokenPreGeneratedLastHourv3;
+OUTPUT TO @OUT_TWITTERDATA_LASTHOUR_V4 WITH STREAMEXPIRY "90";
+
+UrlLastHour = 
+    SELECT url, domain, Functions.ComposeTimeStamp(dateCreation, hourCreation, minuteCreation) AS TimeStamp FROM entityTokenPreGeneratedLastHourv4;
+
+UrlLastHour =
+    SELECT url, FIRST(domain) AS domain, MIN(TimeStamp) AS TimeStamp FROM UrlLastHour; 
+
+//use top source list to refine news url feature
+newsPublishers =
+    EXTRACT site : string,
+            newsCount : ulong,
+            score : double
+    FROM @NEWS_PUBLISHER_PATH
+    USING DefaultTextExtractor("-silent");
+newsPublishers =
+    SELECT *
+    FROM newsPublishers
+    WHERE newsCount > 5000 && score > 1000;
+
+UrlLastHour = 
+SELECT url, TimeStamp 
+FROM UrlLastHour INNER JOIN newsPublishers
+ON UrlLastHour.domain == newsPublishers.site;
+OUTPUT UrlLastHour TO @OUT_URL_FIRST_APPEAR_LASTHOUR_V2 WITH STREAMEXPIRY "90";
+
+#IF(@DEBUG)
+    #DECLARE Output_TwitterCount_Step8 string = @OUTPUT_DIR + "/TwitterCount_Step8.tsv";
+    SELECT tID FROM entityTokenPreGeneratedLastHourv4 GROUP BY tID;
+    SELECT COUNT(*) AS distincttIDCount;
+    OUTPUT TO @Output_TwitterCount_Step8;
+#ENDIF
+
+SELECT tID,
+       entity,
+       entityPrintable,
+       entitytype,
+       entitysubtypetype,
+       entitySource
+FROM entityTokenPreGeneratedLastHourv3;
+OUTPUT TO @OUT_ENTITYDATA_LASTHOUR_V4 ORDER BY tID WITH STREAMEXPIRY "90";
+
+#IF(@DEBUG)
+    #DECLARE Output_TwitterCount_Step9 string = @OUTPUT_DIR + "/TwitterCount_Step9.tsv";
+    SELECT tID GROUP BY tID;
+    SELECT COUNT(*) AS distincttIDCount;
+    OUTPUT TO @Output_TwitterCount_Step9;
+#ENDIF

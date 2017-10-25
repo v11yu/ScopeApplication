@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <StartFile>CalculateAccountCategory.script</StartFile>
+    <StartFile>NewsFeaturesCategory.script</StartFile>
     <CurrentWorkingVC>vc://cosmos11/Realtime</CurrentWorkingVC>
+    <ActiveFile>NewsFeaturesCategory.script</ActiveFile>
     <BuildClusterPlanProperty>False</BuildClusterPlanProperty>
-    <ActiveFile>CalculateAccountCategory.script</ActiveFile>
   </PropertyGroup>
 </Project>

@@ -1,0 +1,29 @@
+﻿//Script GUID:9b6e9d5a-52aa-41ea-bab7-4a13c7dcac59
+//Used for tracking history
+#IF (LOCAL)
+#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\twitter_10_20_07_v4.ss";
+#DECLARE DocSideCDSSM string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\DocSideCDSSM.txt";
+#DECLARE StopWord string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\StopWords.txt";
+#DECLARE output_data_path string = @"D:\News_Team\Query-author-in-Twitter\join-query-tweets.tsv";
+#ELSE
+#DECLARE input_tweet_path string = @@input_tweet_path@@;
+#DECLARE DocSideCDSSM string = @@DocSideCDSSM@@;
+#DECLARE StopWord string = @@StopWord@@;
+#DECLARE output_data_path string = @@output_data_path@@;
+#ENDIF
+
+tw1 = 
+SSTREAM @input_tweet_path;
+
+tw2 = 
+	REDUCE tw1
+	PRODUCE uID,c1,c2,c3
+	USING BreaknessReducer()
+	ON uID;
+
+OUTPUT tw2 
+#IF (LOCAL)
+	TO @output_data_path;
+#ELSE
+	TO SSTREAM @output_data_path;
+#ENDIF

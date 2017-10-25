@@ -11,6 +11,8 @@ namespace DataHandlerApplication
    class CalculateCDSSM
    {
       private static DeepSemanticModel docModel = null;
+      private static DeepSemanticModel twiiterModel = null;
+
       private static DeepSemanticModel GetDocModel(string docModelFile,string stopWordsFile)
       {
          if (docModel == null)
@@ -29,7 +31,8 @@ namespace DataHandlerApplication
          }
          return docModel;
       }
-      public static string GetCDSSM(string doc, string docModelFile, string stopWordsFile)
+
+      public static List<float> GetCDSSM(string doc, string docModelFile, string stopWordsFile)
       {
          List<float> CDSSMFeature = new List<float>();
          DeepSemanticModel dm = GetDocModel(docModelFile, stopWordsFile);
@@ -39,7 +42,23 @@ namespace DataHandlerApplication
             Console.WriteLine("Error: document {0} embedding failed ...", doc);
             return null;
          }
-         return string.Join(",", CDSSMFeature);
+         return CDSSMFeature;
+      }
+
+      public static double GetCosSimilarity(List<float> a, List<float> b)
+      {
+         double num1 = 0, num2 = 0, num3 = 0;
+         if (a.Count != b.Count)
+         {
+            return 0;
+         }
+         for (int i = 0; i < a.Count; i++)
+         {
+            num1 += a[i] * b[i];
+            num2 += a[i] * a[i];
+            num3 += b[i] * b[i];
+         }
+         return num1 / (System.Math.Sqrt(num2) * System.Math.Sqrt(num3));
       }
    }
 }

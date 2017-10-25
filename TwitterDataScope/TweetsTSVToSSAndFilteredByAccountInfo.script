@@ -1,14 +1,13 @@
-﻿#IF (LOCAL)
+﻿//Script GUID:7da0b253-578e-4606-95fa-701bf774aed7
+//Used for tracking history
+#IF (LOCAL)
 #DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\twitter_07_00_00_v4.tsv";
 #DECLARE output_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\twitter_10_20_07_v4.ss";
 #ELSE
-#DECLARE input_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/%Y/%m/%d/twitter_%h_00_00_v4.tsv?date=2017-09-01...2017-10-07&hour=0...23";
-#DECLARE output_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/recent-filtered-tweets-follower5000.ss";
+#DECLARE input_tweet_path string = @@input_tweet_path@@;
+#DECLARE output_tweet_path string = @@output_tweet_path@@;
 #ENDIF
-//Script GUID:657daee9-987c-4007-8939-d70500a0883e
-//Used for tracking history
-//----------------------------------------------------------------------------------------------------------------------------------------------
-// "2016-07-01...2016-07-10"
+
 tw1 =
     EXTRACT dateCreation,
             hourCreation,

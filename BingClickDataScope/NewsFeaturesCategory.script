@@ -1,0 +1,26 @@
+﻿//Script GUID:b4bb3032-f4a2-406e-b688-747bb94d40f9
+//Used for tracking history
+#IF (LOCAL)
+#DECLARE input_path string = @"D:\News_Team\NewsFeatures_2017_09_13_6.ss";
+#DECLARE output_path string = @"D:\News_Team\Query-author-in-Twitter\NewsArticleFeaturesV2-category-1.tsv";
+#ELSE
+#DECLARE input_path string = @"/local/FederatedCosmos/FromBW/NewsArticleFeaturesV2/2017/09/08/NewsFeatures_2017_09_08_10.ss";
+#DECLARE output_path string = @"/local/users/wanwu/NewsArticleFeaturesV2-category.tsv";
+#ENDIF
+
+clk =
+    SSTREAM @input_path;
+
+ca1 =
+    SELECT NewsArticleCategory,
+           NewsArticleSubCategory,
+		   (NewsArticleCategory + " "+ NewsArticleSubCategory) AS Temp
+    FROM clk;
+
+category =
+    SELECT Temp
+    FROM ca1
+    GROUP BY Temp;
+
+OUTPUT category
+TO @output_path;

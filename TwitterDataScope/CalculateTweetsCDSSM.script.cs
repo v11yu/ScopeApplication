@@ -49,7 +49,7 @@ public class TwitterProcessor : Processor
    public override Schema Produces(string[] requested_columns, string[] args, Schema input_schema)
    {
       var output_schema = input_schema.Clone();
-      var newcol = new ColumnInfo("CDSSM", typeof(string));
+      var newcol = new ColumnInfo("tCDSSM", typeof(string));
       output_schema.Add(newcol);
       return output_schema;
    }

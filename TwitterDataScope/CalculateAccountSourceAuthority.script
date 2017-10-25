@@ -1,0 +1,35 @@
+﻿//Script GUID:05f3d2d9-112e-4eed-8350-6d6ecba0955b
+//Used for tracking history
+#DECLARE DEBUG bool = true;
+
+#IF (@DEBUG)
+#DECLARE ss string = "tsv";
+#ELSE
+#DECLARE ss string = "ss";
+#ENDIF
+	
+
+#IF (LOCAL)
+#DECLARE input_path string = @"D:\News_Team\Query-author-in-Twitter\recent-tweets.ss";
+#DECLARE output_path string = @"D:\News_Team\Query-author-in-Twitter\join-query-tweets."+@ss;	
+#ELSE
+#DECLARE input_path string = "/local/Realtime/SocialVoice/recent-filtered-tweets-2.ss";
+#DECLARE output_path string = "/local/Realtime/SocialVoice/recent-filtered-tweets-2-follower10k.ss";
+#ENDIF
+
+// After:
+// step 1 : filtered twitter by account
+// step 2 : calculate per twitter CDSSM
+// step 3 : input category list and output account category
+// step 4 : input account{category,follower, friends,other info}, put account info to get source authority
+
+tw1 =
+    SSTREAM @input_path; // have filtered followed > 10000
+
+
+
+#IF (@DEBUG)
+OUTPUT tw2 TO @output_path;
+#ELSE
+OUTPUT tw2 TO SSTREAM @output_path;
+#ENDIF
