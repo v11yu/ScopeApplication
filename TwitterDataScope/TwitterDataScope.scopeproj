@@ -96,7 +96,7 @@
     <Reference Include="DeepLearning.Model">
       <Name>DeepLearning.Model</Name>
       <AssemblyName>DeepLearning.Model.dll</AssemblyName>
-      <HintPath>bin\DeepLearning.Model.dll</HintPath>
+      <HintPath>..\References\DeepLearning.Model.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
