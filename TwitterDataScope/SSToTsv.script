@@ -1,7 +1,7 @@
 ﻿//Script GUID:46ae4275-ba2a-48b1-a656-7fe1777d8ffc
 //Used for tracking history
 #IF (LOCAL)
-#DECLARE fileName string = "removed-user-v5";
+#DECLARE fileName string = "category_temp";
 #DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\"+@fileName+".ss";
 #DECLARE output_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\"+@fileName+".tsv";
 #ELSE

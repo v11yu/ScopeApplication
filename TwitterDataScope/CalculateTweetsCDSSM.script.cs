@@ -60,11 +60,11 @@ public class TwitterProcessor : Processor
          cnt++;
          if (cnt % 1000 == 0) Console.WriteLine(cnt);
          input_row.CopyTo(output_row);
-         string doc = input_row[3].String;
+         string doc = input_row["tText"].String;
          string CDSSM = GetCDSSM(doc, args[0], args[1]);
          if (CDSSM != null)
          {
-            output_row[8].Set(GetCDSSM(doc, args[0], args[1]));
+            output_row["tCDSSM"].Set(CDSSM);
             yield return output_row;
          }
       }

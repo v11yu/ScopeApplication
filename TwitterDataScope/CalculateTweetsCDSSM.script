@@ -50,9 +50,11 @@ tw2 =
     USING TwitterProcessor(@DocSideCDSSM,@StopWord);
 
 #IF (LOCAL)
+OUTPUT tw2
+TO @output_data_path;
 #ELSE
 OUTPUT tw2
 TO SSTREAM @@OutputPath@@;
-#ENDIF
 OUTPUT tw2
-TO @output_data_path;
+TO SSTREAM @output_data_path;
+#ENDIF

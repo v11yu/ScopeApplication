@@ -47,9 +47,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CalculateAccountAuthority.cs" />
     <Compile Include="CalculateCDSSM.cs" />
     <Compile Include="CalculateWordMapQuery.cs" />
     <Compile Include="CalculateWordMapTweets.cs" />
+    <Compile Include="CategoryGenerator.cs" />
     <Compile Include="FileToValidTSV.cs" />
     <Compile Include="GetQueryFilter.cs" />
     <Compile Include="MyUtility.cs" />

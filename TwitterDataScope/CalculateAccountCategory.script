@@ -4,26 +4,42 @@
 #DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\twitter_10_20_07_v4.ss";
 #DECLARE DocSideCDSSM string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\DocSideCDSSM.txt";
 #DECLARE StopWord string = @"D:\News_Team\Query-author-in-Twitter\SemanticVectorGenerator\Model\StopWords.txt";
+#DECLARE Categorylist string = @"D:\News_Team\Bing-click-data\temp-category-list.tsv";
+#DECLARE RandomN string = "1";
+#DECLARE Threshold string = "0.6";
 #DECLARE output_data_path string = @"D:\News_Team\Query-author-in-Twitter\join-query-tweets.tsv";
 #ELSE
 #DECLARE input_tweet_path string = @@input_tweet_path@@;
 #DECLARE DocSideCDSSM string = @@DocSideCDSSM@@;
 #DECLARE StopWord string = @@StopWord@@;
+#DECLARE Categorylist string = @@Categorylist@@;
+#DECLARE RandomN string = @@RandomN@@;
+#DECLARE Threshold string = @@Threshold@@;
 #DECLARE output_data_path string = @@output_data_path@@;
 #ENDIF
+
+RESOURCE @DocSideCDSSM;
+RESOURCE @StopWord;
+RESOURCE @Categorylist;
+REFERENCE "DeepLearning.Model.dll";
 
 tw1 = 
 SSTREAM @input_tweet_path;
 
 tw2 = 
 	REDUCE tw1
-	PRODUCE uID,c1,c2,c3
-	USING BreaknessReducer()
+	PRODUCE uID,uScreenName,uFavoritesCount,uFollowersCount,uFriendsCount,
+			rt_Sports,rt_ScienceAndTechnology,rt_Business,rt_Entertainment,rt_Education
+	USING CategoryReducer(@DocSideCDSSM,@StopWord,@Categorylist,@RandomN,@Threshold)
 	ON uID;
 
-OUTPUT tw2 
+
 #IF (LOCAL)
-	TO @output_data_path;
+OUTPUT tw2
+TO @output_data_path;
 #ELSE
-	TO SSTREAM @output_data_path;
+OUTPUT tw2
+TO SSTREAM @@OutputPath@@;
+OUTPUT tw2
+TO SSTREAM @output_data_path;
 #ENDIF

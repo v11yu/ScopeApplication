@@ -4,6 +4,7 @@
     <StartFile>CalculateAccountCategory.script</StartFile>
     <CurrentWorkingVC>vc://cosmos11/Realtime</CurrentWorkingVC>
     <BuildClusterPlanProperty>False</BuildClusterPlanProperty>
-    <ActiveFile>CalculateAccountCategory.script</ActiveFile>
+    <ActiveFile>SSToTsv.script</ActiveFile>
+    <OutputStreamPath>%24(PROJECT_DIR)</OutputStreamPath>
   </PropertyGroup>
 </Project>
