@@ -1,2 +1,23 @@
 ﻿//Script GUID:838f3a4a-1be9-4b02-91b1-c345dd00e6a9
 //Used for tracking history
+#IF (LOCAL)
+#DECLARE input_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\recent-filtered-tweets.ss";
+#DECLARE output_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\temp.tsv";
+#ELSE
+#DECLARE input_tweet_path string = @@input_tweet_path@@;
+#DECLARE output_tweet_path string = @@output_tweet_path@@;
+#ENDIF
+
+tw1 = SSTREAM @input_tweet_path;
+
+filteredUser =
+    SELECT *
+    FROM tw1
+    WHERE uFollowersCount > 10000;
+
+OUTPUT
+#IF (LOCAL)
+TO @output_tweet_path;
+#ELSE
+TO SSTREAM @output_tweet_path;
+#ENDIF

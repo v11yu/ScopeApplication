@@ -139,11 +139,17 @@ public class CategoryReducer : Reducer
         foreach (KeyValuePair<string, List<float>> entity in GetCategoryCDSSM(args[0], args[1], args[2]))
         {
             double sum = 0;
+            int cc = 0;
             foreach (List<float> tTextVector in textList)
             {
+                if (tTextVector == null || entity.Value == null)
+                {
+                    continue;
+                }
                 sum += GetCosSimilarity(tTextVector, entity.Value);
+                cc++;
             }
-            sum = sum / randomN;
+            sum = sum / cc;
             if(sum>threshold)
             {
                 outputRow[GetCategoryToColName()[entity.Key]].Set("true");

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,6 +36,14 @@ namespace DataHandlerApplication
             Console.WriteLine(CalculateCDSSM.GetCosSimilarity(val, val1));
             Console.ReadLine();
         }
+
+        public static string GetMD5String(string url)
+        {
+            MD5 md5 = new MD5CryptoServiceProvider();
+            byte[] result = md5.ComputeHash(System.Text.Encoding.Default.GetBytes(url));
+            return BitConverter.ToString(result).Replace("-", "");
+        }
+
         static void Main(string[] args)
         {
             string path = @"D:\News_Team\Query-author-in-Twitter\";
@@ -47,12 +56,8 @@ namespace DataHandlerApplication
             //StatisticsJudgement.statisticsJudgement(@"D:\News_Team\Judgement\UHRS_Task_Round 2.1.tsv", 3, 15, 17);
             //CategoryGenerator.GeneratorCategoryList(@"D:\News_Team\Bing-click-data\NewsArticleFeaturesV2-category-1.tsv", @"D:\News_Team\Bing-click-data\category-list.tsv");
             //CategoryGenerator.GeneratorCategoryList(args[0],args[1]);
-
-            Dictionary<string, string> tmp = new Dictionary<string, string>();
-            tmp["123"] = "111";
-            tmp["123"] = "111";
-            tmp["123"] = "113";
-            Console.WriteLine(tmp["123"]);
+            
+            Console.WriteLine(GetMD5String(string.Concat("http://www.sacbee.com/news/business/article184317858.html","tweccexp")));
             Console.ReadLine();
         }
     }

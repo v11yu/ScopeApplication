@@ -31,6 +31,7 @@
     <Script Include="CalculateAccountSourceAuthority.script" />
     <Script Include="CalculateTweetsCDSSM.script" />
     <Script Include="Clustered.script" />
+    <Script Include="CountUserNumber.script" />
     <Script Include="FilteredTwitterByAccount.script" />
     <Script Include="FilterPubliserUserV3.script" />
     <Script Include="FilterPublisherUser.script" />
@@ -54,6 +55,9 @@
     </ScriptCode>
     <ScriptCode Include="Clustered.script.cs">
       <DependentUpon>Clustered.script</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="CountUserNumber.script.cs">
+      <DependentUpon>CountUserNumber.script</DependentUpon>
     </ScriptCode>
     <ScriptCode Include="FilteredTwitterByAccount.script.cs">
       <DependentUpon>FilteredTwitterByAccount.script</DependentUpon>

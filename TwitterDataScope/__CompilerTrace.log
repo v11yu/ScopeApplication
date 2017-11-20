@@ -1,0 +1,7 @@
+﻿2017-11-13T19:03:48.2473838+08:00	UnknownJobId_1037720144	CFE	VC	SetDefaultCredentials	SetDefaultCredentials("vc://cosmos08/Realtime.express","<noproxy>") : 63.7734ms =>	null	2017-11-13T19:03:48.2534108+08:00
+2017-11-13T19:03:50.0669700+08:00	UnknownJobId_1037720144	InputOutput	ScopeLanguageServicesPathManager	WaitForAsyncWork	Finished waiting for all AsyncWork.	2017-11-13T19:03:50.0679716+08:00
+2017-11-14T12:57:48.7094030+08:00	UnknownJobId_1037720144	InputOutput	ScopeLanguageServicesPathManager	WaitForAsyncWork	Finished waiting for all AsyncWork.	2017-11-14T12:57:48.7094030+08:00
+2017-11-14T13:41:00.6362769+08:00	UnknownJobId_1037720144	InputOutput	ScopeLanguageServicesPathManager	WaitForAsyncWork	Finished waiting for all AsyncWork.	2017-11-14T13:41:00.6362769+08:00
+2017-11-14T13:49:42.6980976+08:00	UnknownJobId_1037720144	InputOutput	ScopeLanguageServicesPathManager	WaitForAsyncWork	Finished waiting for all AsyncWork.	2017-11-14T13:49:42.6980976+08:00
+2017-11-14T13:49:44.7179727+08:00	UnknownJobId_1037720144	InputOutput	ScopeLanguageServicesPathManager	WaitForAsyncWork	Finished waiting for all AsyncWork.	2017-11-14T13:49:44.7179727+08:00
+2017-11-14T13:49:44.7610013+08:00	UnknownJobId_1037720144	InputOutput	ScopeLanguageServicesPathManager	WaitForAsyncWork	Finished waiting for all AsyncWork.	2017-11-14T13:49:44.7610013+08:00
