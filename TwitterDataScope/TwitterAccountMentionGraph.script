@@ -1,0 +1,109 @@
+﻿//Script GUID:79ea68bf-4ef7-49ef-8f65-c5278887a110
+//Used for tracking history
+#IF (LOCAL)
+#DECLARE input_tweet_path string = 
+	//@"D:\Download\recent-filtered-tweets9-11.ss";
+	@"D:\News_Team\Query-author-in-Twitter\twitter_07_00_00_v4.tsv";
+#DECLARE verify_user_path string = @"D:\Download\verified-user.tsv";
+#DECLARE output_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\temp.tsv";
+
+#ELSE
+#DECLARE input_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/%Y/%m/%d/twitter_%h_00_00_v4.tsv?date=2017-09-01...2017-11-17&hour=0...23&sparsestreamset=true";
+#DECLARE verify_user_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/Relation/verified-user.tsv";
+#DECLARE output_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/Relation/Account-relation.tsv";
+
+#ENDIF
+
+RESOURCE @verify_user_path;
+
+/*
+removeDuplicate =  
+	SSTREAM @input_tweet_path;
+*/
+	
+/*
+tw1 =
+    EXTRACT dateCreation,
+            hourCreation,
+            minuteCreation,
+            url,
+            domain,
+            isnewsurl,
+            tID,
+            uID,
+            uName,
+            userAgeInDays,
+            tweettext,
+            tIsRetweet,
+            tPublishTime,
+            tRetweetCount,
+            tText,
+            tRawText,
+            tSpamScore,
+            tTextFragments,
+            uScreenName,
+            uAuthScore,
+            uFavoritesCount,
+            uFollowersCount:int,
+            uFriendsCount,
+            uProfile,
+            uVerified:bool
+    FROM @input_tweet_path
+    USING DefaultTextExtractor();
+
+verifyUser =
+    SELECT *
+    FROM tw1
+    WHERE uVerified == true AND tText.Length > 5;
+
+removeDuplicate =
+    SELECT //MAX(dateCreation) AS dateCreation,
+           //FIRST(hourCreation) AS hourCreation,
+           //FIRST(minuteCreation) AS minuteCreation,
+           FIRST(url) AS url,
+           FIRST(domain) AS domain,
+           FIRST(isnewsurl) AS isnewsurl,
+           tID,
+           FIRST(uID) AS uID,
+           FIRST(uName) AS uName,
+           FIRST(userAgeInDays) AS userAgeInDays,
+           //FIRST(tweettext) AS tweettext,
+           //FIRST(tIsRetweet) AS tIsRetweet,
+           //FIRST(tPublishTime) AS tPublishTime,
+           MAX(tRetweetCount) AS tRetweetCount,
+           FIRST(tText) AS tText,
+           FIRST(tRawText) AS tRawText,
+           //FIRST(tSpamScore) AS tSpamScore,
+          // FIRST(tTextFragments) AS tTextFragments,
+           FIRST(uScreenName) AS uScreenName,
+           //MAX(uAuthScore) AS uAuthScore,
+           MAX(uFavoritesCount) AS uFavoritesCount,
+           MAX(uFollowersCount) AS uFollowersCount,
+           MAX(uFriendsCount) AS uFriendsCount,
+           //FIRST(uProfile) AS uProfile,
+           FIRST(uVerified) AS uVerified
+    FROM verifyUser
+    GROUP BY tID;
+//	ORDER BY tRetweetCount DESC;
+*/
+
+
+tw2 =
+    PROCESS removeDuplicate
+    PRODUCE uScreenName,
+            toname,
+            relation
+    USING RelationProcessor(@verify_user_path);
+
+tw3 = 
+	REDUCE tw2
+	PRODUCE uScreenName,mRelation,sRelation
+	USING RelationReducer()
+	ON uScreenName;
+
+OUTPUT
+#IF (LOCAL)
+TO @output_tweet_path;
+#ELSE
+TO @output_tweet_path;
+#ENDIF

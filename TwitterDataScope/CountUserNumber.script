@@ -1,7 +1,7 @@
 ﻿//Script GUID:1dc095fb-0f88-4230-a9b2-6f35033f2dd9
 //Used for tracking history
 #IF (LOCAL)
-#DECLARE input_tweet_path string = @"D:\Download\recent-filtered-tweets-follower5000.ss";
+#DECLARE input_tweet_path string = @"D:\Download\recent-filtered-tweets9-11.ss";
 #DECLARE output_tweet_path string = @"D:\Download\verified-user.tsv";
 #ELSE
 #DECLARE input_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/%Y/%m/%d/twitter_%h_00_00_v4.tsv?date=2017-09-01...2017-10-07&hour=0...23";
@@ -21,11 +21,11 @@ removeDuplicate =
            //FIRST(hourCreation) AS hourCreation,
            //FIRST(minuteCreation) AS minuteCreation,
            //FIRST(url) AS url,
-           FIRST(uScreenName) AS uScreenName,
+           uScreenName
            //FIRST(domain) AS domain,
            //FIRST(isnewsurl) AS isnewsurl,
            //FIRST(tID) AS tID,
-           uID
+           //uID
            //FIRST(uName) AS uName,
            //FIRST(userAgeInDays) AS userAgeInDays,
            //FIRST(tweettext) AS tweettext,
@@ -42,7 +42,7 @@ removeDuplicate =
            //FIRST(uProfile) AS uProfile,
            //FIRST(uVerified) AS uVerified
     FROM verifyUser
-    GROUP BY uID;
+    GROUP BY uScreenName;
 //	ORDER BY tRetweetCount DESC;
 
 OUTPUT

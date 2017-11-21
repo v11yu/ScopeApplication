@@ -43,6 +43,7 @@
     <Script Include="TestLocalData.script" />
     <Script Include="TsvToSS.script" />
     <Script Include="TweetsTSVToSSAndFilteredByAccountInfo.script" />
+    <Script Include="TwitterAccountMentionGraph.script" />
     <Script Include="TwitterNgramGeneration.script" />
     <ScriptCode Include="CalculateAccountCategory.script.cs">
       <DependentUpon>CalculateAccountCategory.script</DependentUpon>
@@ -91,6 +92,9 @@
     </ScriptCode>
     <ScriptCode Include="TweetsTSVToSSAndFilteredByAccountInfo.script.cs">
       <DependentUpon>TweetsTSVToSSAndFilteredByAccountInfo.script</DependentUpon>
+    </ScriptCode>
+    <ScriptCode Include="TwitterAccountMentionGraph.script.cs">
+      <DependentUpon>TwitterAccountMentionGraph.script</DependentUpon>
     </ScriptCode>
     <ScriptCode Include="TwitterNgramGeneration.script.cs">
       <DependentUpon>TwitterNgramGeneration.script</DependentUpon>
