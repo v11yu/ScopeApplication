@@ -2,7 +2,7 @@
 //Used for tracking history
 #IF (LOCAL)
 #DECLARE input_tweet_path string = @"D:\Download\recent-filtered-tweets9-11.ss";
-#DECLARE output_tweet_path string = @"D:\Download\verified-user.tsv";
+#DECLARE output_tweet_path string = @"D:\Download\verified-user-fw.tsv";
 #ELSE
 #DECLARE input_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/%Y/%m/%d/twitter_%h_00_00_v4.tsv?date=2017-09-01...2017-10-07&hour=0...23";
 #DECLARE output_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/recent-filtered-tweets-follower5000.ss";
@@ -21,7 +21,7 @@ removeDuplicate =
            //FIRST(hourCreation) AS hourCreation,
            //FIRST(minuteCreation) AS minuteCreation,
            //FIRST(url) AS url,
-           uScreenName
+           uScreenName,
            //FIRST(domain) AS domain,
            //FIRST(isnewsurl) AS isnewsurl,
            //FIRST(tID) AS tID,
@@ -37,13 +37,13 @@ removeDuplicate =
           // FIRST(tTextFragments) AS tTextFragments,
            //MAX(uAuthScore) AS uAuthScore,
            //MAX(uFavoritesCount) AS uFavoritesCount,
-           //MAX(uFollowersCount) AS uFollowersCount,
+           MAX(uFollowersCount) AS uFollowersCount
            //MAX(uFriendsCount) AS uFriendsCount,
            //FIRST(uProfile) AS uProfile,
            //FIRST(uVerified) AS uVerified
     FROM verifyUser
-    GROUP BY uScreenName;
-//	ORDER BY tRetweetCount DESC;
+    GROUP BY uScreenName
+	ORDER BY uFollowersCount DESC;
 
 OUTPUT
 #IF (LOCAL)

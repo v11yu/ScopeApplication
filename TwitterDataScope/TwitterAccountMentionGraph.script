@@ -6,12 +6,12 @@
 	@"D:\News_Team\Query-author-in-Twitter\twitter_07_00_00_v4.tsv";
 #DECLARE verify_user_path string = @"D:\Download\verified-user.tsv";
 #DECLARE output_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\temp.tsv";
-
+#DECLARE output_tweet_pathss string = @"D:\News_Team\Query-author-in-Twitter\temp.ss";
 #ELSE
 #DECLARE input_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/%Y/%m/%d/twitter_%h_00_00_v4.tsv?date=2017-09-01...2017-11-17&hour=0...23&sparsestreamset=true";
 #DECLARE verify_user_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/Relation/verified-user.tsv";
-#DECLARE output_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/Relation/Account-relation.tsv";
-
+#DECLARE output_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/Relation/relation9-11.tsv";
+#DECLARE output_tweet_pathss string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/Relation/relation9-11.ss";
 #ENDIF
 
 RESOURCE @verify_user_path;
@@ -21,7 +21,7 @@ removeDuplicate =
 	SSTREAM @input_tweet_path;
 */
 	
-/*
+
 tw1 =
     EXTRACT dateCreation,
             hourCreation,
@@ -85,7 +85,6 @@ removeDuplicate =
     FROM verifyUser
     GROUP BY tID;
 //	ORDER BY tRetweetCount DESC;
-*/
 
 
 tw2 =
@@ -93,7 +92,7 @@ tw2 =
     PRODUCE uScreenName,
             toname,
             relation
-    USING RelationProcessor(@verify_user_path);
+    USING RelationProcessor(@"verified-user.tsv");
 
 tw3 = 
 	REDUCE tw2
@@ -101,9 +100,14 @@ tw3 =
 	USING RelationReducer()
 	ON uScreenName;
 
-OUTPUT
+OUTPUT tw3
 #IF (LOCAL)
 TO @output_tweet_path;
 #ELSE
 TO @output_tweet_path;
 #ENDIF
+
+OUTPUT tw3
+TO SSTREAM @output_tweet_pathss
+   CLUSTERED BY uScreenName
+       SORTED BY uScreenName;

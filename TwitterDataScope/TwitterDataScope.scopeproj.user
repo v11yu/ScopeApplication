@@ -4,7 +4,7 @@
     <StartFile>TwitterAccountMentionGraph.script</StartFile>
     <CurrentWorkingVC>vc://cosmos08/Realtime.express</CurrentWorkingVC>
     <BuildClusterPlanProperty>False</BuildClusterPlanProperty>
-    <ActiveFile>Clustered.script</ActiveFile>
+    <ActiveFile>CountUserNumber.script</ActiveFile>
     <OutputStreamPath>%24(PROJECT_DIR)</OutputStreamPath>
   </PropertyGroup>
 </Project>
