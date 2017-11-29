@@ -14,6 +14,11 @@ public class RelationReducer : Reducer
         return "{" + string.Join(",", dictionary.Select(kv => kv.Key + "=" + kv.Value).ToArray()) + "}";
     }
 
+    public static string ListToDebugString(List<string> ls)
+    {
+        return "{" + string.Join(",", ls) + "}";
+    }
+
     public Dictionary<string,int> Sorted(Dictionary<string,int> dic)
     {
         dic = dic.OrderBy(x => -x.Value).ToDictionary(x => x.Key, x => x.Value);
@@ -22,7 +27,7 @@ public class RelationReducer : Reducer
 
     public override Schema Produces(string[] requestedColumns, string[] args, Schema inputSchema)
     {
-        return new Schema("uScreenName, mRelation, sRelation");
+        return new Schema("uScreenName, rNames");
     }
 
     public override IEnumerable<Row> Reduce(RowSet input, Row outputRow, string[] args)
@@ -57,10 +62,14 @@ public class RelationReducer : Reducer
         }
         sDic = Sorted(sDic);
         mDic = Sorted(mDic);
-
+        List<string> res = new List<string>();
+        foreach (KeyValuePair<string, int> entity in mDic)
+        {
+            if (res.Count == 20) break;
+            res.Add(entity.Key);
+        }
         outputRow["uScreenName"].Set(uScreenName);
-        outputRow["sRelation"].Set(ToDebugString(sDic));
-        outputRow["mRelation"].Set(ToDebugString(mDic));
+        outputRow["rNames"].Set(ListToDebugString(res));
 
         yield return outputRow;
     }

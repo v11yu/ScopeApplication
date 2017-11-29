@@ -2,9 +2,9 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <StartFile>TwitterAccountMentionGraph.script</StartFile>
-    <CurrentWorkingVC>vc://cosmos08/Realtime.express</CurrentWorkingVC>
+    <CurrentWorkingVC>vc://cosmos11/Realtime</CurrentWorkingVC>
     <BuildClusterPlanProperty>False</BuildClusterPlanProperty>
-    <ActiveFile>CountUserNumber.script</ActiveFile>
+    <ActiveFile>TwitterAccountMentionGraph.script</ActiveFile>
     <OutputStreamPath>%24(PROJECT_DIR)</OutputStreamPath>
   </PropertyGroup>
 </Project>

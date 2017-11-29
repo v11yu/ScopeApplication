@@ -1,17 +1,22 @@
 ﻿//Script GUID:79ea68bf-4ef7-49ef-8f65-c5278887a110
 //Used for tracking history
+#DECLARE THISMonth DateTime = DateTime.UtcNow.AddHours(0); 
+#DECLARE LASTMonth DateTime = DateTime.UtcNow.AddDays(-30);
+
 #IF (LOCAL)
 #DECLARE input_tweet_path string = 
 	//@"D:\Download\recent-filtered-tweets9-11.ss";
+	//@"D:\News_Team\Query-author-in-Twitter\twitter_07_00_00_v4.tsv";
 	@"D:\News_Team\Query-author-in-Twitter\twitter_07_00_00_v4.tsv";
 #DECLARE verify_user_path string = @"D:\Download\verified-user.tsv";
 #DECLARE output_tweet_path string = @"D:\News_Team\Query-author-in-Twitter\temp.tsv";
 #DECLARE output_tweet_pathss string = @"D:\News_Team\Query-author-in-Twitter\temp.ss";
 #ELSE
-#DECLARE input_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/%Y/%m/%d/twitter_%h_00_00_v4.tsv?date=2017-09-01...2017-11-17&hour=0...23&sparsestreamset=true";
+#DECLARE input_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/%Y/%m/%d/twitter_%h_00_00_v4.tsv?date="+@LASTMonth.ToString("yyyy-MM-dd")+"..."+@THISMonth.ToString("yyyy-MM-dd")+"&hour=0...23&sparsestreamset=true";
 #DECLARE verify_user_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/Relation/verified-user.tsv";
-#DECLARE output_tweet_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/Relation/relation9-11.tsv";
-#DECLARE output_tweet_pathss string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Ngrams/2017/Relation/relation9-11.ss";
+#DECLARE output_path string = @"/local/Realtime/SocialVoice/TwitterSummarizedContent/AnalyticsCounts/Mention/"+@THISMonth.ToString("yyyy")+"/"+@THISMonth.ToString("MM")+"/";
+#DECLARE output_tweet_path string = @output_path+"related-account.tsv";
+#DECLARE output_tweet_pathss string = @output_path+"related-account.ss";
 #ENDIF
 
 RESOURCE @verify_user_path;
@@ -96,7 +101,7 @@ tw2 =
 
 tw3 = 
 	REDUCE tw2
-	PRODUCE uScreenName,mRelation,sRelation
+	PRODUCE uScreenName,rNames
 	USING RelationReducer()
 	ON uScreenName;
 
